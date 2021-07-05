@@ -1,33 +1,77 @@
 .mainarea
 {
-    display: flex;
     padding: 20px;
-    -webkit-box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.2);
-    box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.2);
-    border-radius: 1px;
-    height: 540px;
-    width: 540px;
     float: left;
+    display: flex;
 }
 
 .controls
 {
     display: flex;
     padding: 20px;
-    margin-left: 560px;
+    margin-left: 30em;
 }
 
 .cell
 {
-    display: inline-block;
+    display: flex;
+    position: relative;
     padding: 0px;
     margin: 0px;
-    border-left: 1px;
-    border-right: 1px;
-    border-top: 1px;
-    border-bottom: 1px;
-    border-style: solid;
-    height: 58px;
-    width: 58px;
-    border-collapse: collapse;
+    height: 3em;
+    width: 3em;
+    justify-content: center;
+    align-items: center;
+}
+
+.digit {
+    font-size: large;
+}
+
+.start {
+    width: 100%;
+    display: block;
+}
+
+.updatetype {
+    width: 8em;
+}
+
+.selected {
+    color: white;
+    background-color: blue;
+}
+
+.selectedcell {
+    box-shadow: inset 0px 0px 0px 3px red;
+}
+
+td {
+    padding: 3px;
+}
+
+.pencilmark-center {
+    font-size: 0.8em;
+    color: blue;
+}
+
+.pencilmark-value {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: blue;
+}
+
+.pencilmark-fixed {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: black;
+}
+
+.pencilmark-corner {
+    font-size: 0.8em;
+    position: absolute;
+    padding: 5px;
+    top: 0px;
+    left: 0px;
+    color: blue;
 }
