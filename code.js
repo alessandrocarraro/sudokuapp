@@ -1,43 +1,42 @@
-var selection = [];
 var sudoku = new Sudoku();
+var multiselect = false;
+var updatemode = "mode-center";
 
-function createCell(r, c) {
-    var par = document.createElement("p");
-    text = document.createTextNode("[" + r + "," + c+ "]");
-    par.appendChild(text);
+function createCell(c, r) {
     var elem = document.createElement("div");
     elem.className = "cell";
     elem.id = "r" + r + "c" + c;
-    elem.appendChild(par);
     elem.addEventListener("click", oncellselect)
+
+    if (r % 3 == 0)
+        elem.style.borderTop = "3px solid black";
+    else
+        elem.style.borderTop = "1px solid black";
+    if (r == 8)
+        elem.style.borderBottom = "3px solid black";
+    if (c % 3 == 0)
+        elem.style.borderLeft = "3px solid black";
+    else
+        elem.style.borderLeft = "1px solid black";
+    if (c == 8)
+        elem.style.borderRight = "3px solid black";
     return elem;
 }
 
-function findParent(elem, localName) {
-    if (elem.localName == localName)
-        return elem;
-    return findParent(elem.parentNode, localName);
-}
-
-function clearSelection() {
-    selection = [];
-    var elements = document.getElementById("content").getElementsByClassName("cell");
-    elements.forEach(element => {
-        element.style.backgroundColor = null;
-    });
-}
-
 function oncellselect(e) {
-    var current = e.target;
-    if (current.localName != "div")
-        current = findParent(current, "div");
-    
-    if (current.style.backgroundColor == "lightyellow")
-        current.style.backgroundColor = null;
+    if (this.classList.contains("selectedcell"))
+        this.classList.remove("selectedcell");
     else
-        current.style.backgroundColor = "lightyellow";
+    {
+        if (!multiselect)
+            resetSelectedCells();
+        this.classList.add("selectedcell")    
+    }
+}
 
-    selection.push(sudoku.labels[elem.id])
+function resetSelectedCells() {
+    document.querySelectorAll(".selectedcell").forEach(cell => {
+        cell.classList.remove("selectedcell")});
 }
 
 function createRow(r) {
@@ -51,15 +50,42 @@ function createRow(r) {
 }
 
 function start() {    
+    sudoku = new Sudoku();
     var mainarea = document.getElementById("content");
     mainarea.textContent = "";
     for (var i = 0; i < 9; i++)
     {
         var row = createRow(i);
         mainarea.appendChild(row);
-    }   
+    } 
+    
+    for(const element of document.getElementsByClassName("updatetype")) {
+        element.addEventListener("click", toggleUpdateMode)
+    }
+}
+
+function toggleUpdateMode(e) {
+    updatemode = this.id;
+    document.querySelectorAll(".updatetype").forEach(element => {
+        selectButton(element, element.id == this.id);
+    });
+}
+
+function toggleSelectMode() {
+    multiselect = !multiselect;
+    if (!multiselect)
+        resetSelectedCells();
+    selectButton(document.getElementById("btn-select-mode"), multiselect)
+}
+
+function selectButton(element, condition) {
+    if (condition)
+        element.classList.add("selected");
+    else
+        element.classList.remove("selected");
 }
 
 function apply(value) {
-    
+    var selection = document.querySelectorAll(".selectedcell");
+    sudoku.updateCells(selection, updatemode, value);
 }

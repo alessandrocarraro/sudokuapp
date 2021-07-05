@@ -1,51 +1,74 @@
 <html>
     <head>
         <link rel="stylesheet" href="style.css">        
-        <script src="cell.js"> </script>
-        <script src="code.js"> </script>
     </head>
 <body>
     
-    <div class="mainarea" id="content">
-    </div>
-    <div class="controls">
-        <button onclick="start()"> Start </button>
+    <div class="mainarea" id="content"></div>
+    <div class="controls">        
         <table>
             <tr>
                 <td>
-                    <button onclick="apply(1)" style="font-size: large;">1</button>
-                </td>
-                <td>
-                    <button onclick="apply(2)" style="font-size: large;">2</button>
-                </td>
-                <td>
-                    <button onclick="apply(3)" style="font-size: large;">3</button>
+                    <button onclick="start()" class="start"> Start </button>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <button onclick="apply(4)" style="font-size: large;">4</button>
+                    <button class="updatetype" id="mode-corner">Corner</button>
                 </td>
                 <td>
-                    <button onclick="apply(5)" style="font-size: large;">5</button>
+                    <button onclick="apply(1)" class="digit">1</button>
                 </td>
                 <td>
-                    <button onclick="apply(6)" style="font-size: large;">6</button>
+                    <button onclick="apply(2)" class="digit">2</button>
+                </td>
+                <td>
+                    <button onclick="apply(3)" class="digit" >3</button>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <button onclick="apply(7)" style="font-size: large;">7</button>
+                    <button class="updatetype" id="mode-center">Center</button>
                 </td>
                 <td>
-                    <button onclick="apply(8)" style="font-size: large;">8</button>
+                    <button onclick="apply(4)" class="digit">4</button>
                 </td>
                 <td>
-                    <button onclick="apply(9)" style="font-size: large;">9</button>
+                    <button onclick="apply(5)" class="digit">5</button>
+                </td>
+                <td>
+                    <button onclick="apply(6)" class="digit">6</button>
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <button class="updatetype" id="mode-value">Value</button>
+                </td>
+                <td>
+                    <button onclick="apply(7)" class="digit">7</button>
+                </td>
+                <td>
+                    <button onclick="apply(8)" class="digit">8</button>
+                </td>
+                <td>
+                    <button onclick="apply(9)" class="digit">9</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button onclick="toggleSelectMode()" id="btn-select-mode" class="start">Multi</button>
+                </td>
+                <td>
+                </td>
+                <td colspan=2>
+                    <button onclick="apply('')" class="digit start"> C </button>
+                </td>
         </table>
-        <button onclick="clearSelection()"> Clear </button>
-    <div>
+        <button onclick="document.getElementById('file-input').click();">Open</button>
+        <input id="file-input" type="file" name="name" style="display: none;" />    
+        
+    </div>
+    <script src="cell.js"> </script>
+    <script src="code.js"> </script>
 </body>
 </html> 
