@@ -1,6 +1,5 @@
 var sudoku = new Sudoku();
 var multiselect = false;
-var updatemode = "mode-center";
 
 function createCell(c, r) {
     var elem = document.createElement("div");
@@ -49,8 +48,8 @@ function createRow(r) {
     return row;
 }
 
-function start() {    
-    sudoku = new Sudoku();
+function start(data) {
+    sudoku = new Sudoku(data);
     var mainarea = document.getElementById("content");
     mainarea.textContent = "";
     for (var i = 0; i < 9; i++)
@@ -58,7 +57,7 @@ function start() {
         var row = createRow(i);
         mainarea.appendChild(row);
     } 
-    
+    sudoku.renderAll();
     for(const element of document.getElementsByClassName("updatetype")) {
         element.addEventListener("click", toggleUpdateMode)
     }
@@ -80,12 +79,63 @@ function toggleSelectMode() {
 
 function selectButton(element, condition) {
     if (condition)
-        element.classList.add("selected");
+    {
+        element.classList.remove("btn-outline-secondary");
+        element.classList.add("btn-secondary");
+    }        
     else
-        element.classList.remove("selected");
+    {
+        element.classList.remove("btn-secondary");
+        element.classList.add("btn-outline-secondary");
+    }
+}
+
+function getUpdateMode() {
+    for(const elem of document.getElementsByName("updatetype"))
+    {
+        if (elem.checked)
+            return elem.id;
+    }
+    console.log("this is impossible");
+    return "mode-value";
 }
 
 function apply(value) {
+    var updatemode = getUpdateMode();
     var selection = document.querySelectorAll(".selectedcell");
     sudoku.updateCells(selection, updatemode, value);
+    if (multiselect)
+        toggleSelectMode();
 }
+
+function loadfile() {
+    document.getElementById('file-input').click();
+}
+
+function loadpuzzle(){
+    var loader = document.getElementById('file-input');
+    var reader = new FileReader();
+    reader.readAsText(loader.files[0]);
+    reader.onload = function () {
+        var data = JSON.parse(reader.result);
+        start(data);
+    }
+    reader.onerror = function() {
+        console.log(reader.error);
+    }    
+}
+
+function savefile() {
+    var jsonData = sudoku.save();
+    download(jsonData, 'puzzle.json', 'application/json');
+}
+
+function download(content, fileName, contentType) {
+    var a = document.createElement("a");
+    var file = new Blob([content], {type: contentType});
+    a.href = URL.createObjectURL(file);
+    a.download = fileName;
+    a.click();
+}
+
+start();

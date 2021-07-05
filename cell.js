@@ -8,6 +8,13 @@ function merge(input, value) {
     return elements.sort().join('');
 }
 
+function replace(input, value) {
+    if (value == input)
+        return '';
+    return value;
+}
+
+
 function createSudoku() {
     sudoku = {};
     for (var i = 0; i < 9; i++) {
@@ -40,6 +47,7 @@ class Sudoku
         if (cells == null)
             cells = createSudoku();
         this.cells = cells;
+        this.colors = [null, "#a7f1a7", "PaleTurquoise", "#FFA953", "#FF7E77", "lightpink", "#DC76FF", "#FFFF66", "lightgray", "#99CCFF"]
     }
 
     update(elem, updatetype, value) {
@@ -50,10 +58,9 @@ class Sudoku
         if (updatetype == "mode-center")
             cell.center = merge(cell.center, value)
         if (updatetype == "mode-value")
-            if (cell.value == value)
-                cell.value = '';
-            else
-                cell.value = value
+            cell.value = replace(cell.value, value);
+        if (updatetype == "mode-color")
+            cell.color = replace(cell.color, value);
         this.render(elem);
     }
 
@@ -74,11 +81,24 @@ class Sudoku
             elem.appendChild(createMark(cell.corner, "pencilmark-corner"));
         if (cell.center != '')
             elem.appendChild(createMark(cell.center, "pencilmark-center"));
-        elem.backgroundColor = cell.color;
+        if (cell.color != '')
+            elem.style.backgroundColor = this.colors[cell.color];
+        else
+            elem.style.backgroundColor = null;
+
+    }
+
+    renderAll() {
+        document.querySelectorAll(".cell")
+            .forEach(e => this.render(e));
     }
 
     updateCells(selection, updatetype, value)
     {
         selection.forEach(e => this.update(e, updatetype, value));
+    }
+
+    save() {
+        return JSON.stringify(this.cells);
     }
 }

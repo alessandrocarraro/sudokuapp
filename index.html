@@ -1,73 +1,95 @@
-<html>
+<!doctype html>
+<html lang="en">
     <head>
-        <link rel="stylesheet" href="style.css">        
+        <meta charset="utf-8">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="style.css">
     </head>
-<body>
-    
-    <div class="mainarea" id="content"></div>
-    <div class="controls">        
-        <table>
-            <tr>
-                <td>
-                    <button onclick="start()" class="start"> Start </button>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <button class="updatetype" id="mode-corner">Corner</button>
-                </td>
-                <td>
-                    <button onclick="apply(1)" class="digit">1</button>
-                </td>
-                <td>
-                    <button onclick="apply(2)" class="digit">2</button>
-                </td>
-                <td>
-                    <button onclick="apply(3)" class="digit" >3</button>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <button class="updatetype" id="mode-center">Center</button>
-                </td>
-                <td>
-                    <button onclick="apply(4)" class="digit">4</button>
-                </td>
-                <td>
-                    <button onclick="apply(5)" class="digit">5</button>
-                </td>
-                <td>
-                    <button onclick="apply(6)" class="digit">6</button>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <button class="updatetype" id="mode-value">Value</button>
-                </td>
-                <td>
-                    <button onclick="apply(7)" class="digit">7</button>
-                </td>
-                <td>
-                    <button onclick="apply(8)" class="digit">8</button>
-                </td>
-                <td>
-                    <button onclick="apply(9)" class="digit">9</button>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <button onclick="toggleSelectMode()" id="btn-select-mode" class="start">Multi</button>
-                </td>
-                <td>
-                </td>
-                <td colspan=2>
-                    <button onclick="apply('')" class="digit start"> C </button>
-                </td>
-        </table>
-        <button onclick="document.getElementById('file-input').click();">Open</button>
-        <input id="file-input" type="file" name="name" style="display: none;" />    
+    <body>
         
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Free Sudoku App</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+    
+    <div class="navbar-nav">
+      <div class="nav-item text-nowrap">
+        <a class="nav-link px-3" href="#">Broken Link</a>
+      </div>
     </div>
+  </header>
+  
+  <div class="container-fluid">
+    <div class="row">
+      <nav id="sidebarMenu" class="col-md-2 col-lg-1 d-md-block bg-light sidebar collapse">
+        <div class="position-sticky pt-3">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#" onclick="start()">
+                <span data-feather="home"></span>
+                New
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" onclick="loadfile()">
+                <span data-feather="file"></span>
+                Load
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" onclick="savefile()">
+                <span data-feather="shopping-cart"></span>
+                Save
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    <main class="col-md-10 ms-sm-auto col-lg-11 px-md-4">
+
+
+    <div class="mainarea" id="content"></div>
+
+    <div class="container">
+      <div class="row px-4 py-4">
+        <div class="col-2">
+          <div class="btn-group-vertical btn-group-lg" role="group">
+              <input type="radio" class="btn-check" name="updatetype" id="mode-value" autocomplete="off" checked>
+              <label class="btn btn-outline-secondary" for="mode-value">Value</label>
+            
+              <input type="radio" class="btn-check" name="updatetype" id="mode-center" autocomplete="off">
+              <label class="btn btn-outline-secondary" for="mode-center">Center</label>
+            
+              <input type="radio" class="btn-check" name="updatetype" id="mode-corner" autocomplete="off">
+              <label class="btn btn-outline-secondary" for="mode-corner">Corner</label>
+      
+              <input type="radio" class="btn-check" name="updatetype" id="mode-color" autocomplete="off">
+              <label class="btn btn-outline-secondary" for="mode-color">Color</label>
+
+              <button class="btn btn-outline-secondary" onclick="toggleSelectMode()" id="btn-select-mode" class="start">Multi</button>
+          </div>
+          
+        </div>
+        <div class="col-md-auto">
+          <div class="btn-group-vertical btn-group-lg" role="group">
+            <button class="btn btn-outline-secondary" onclick="apply(1)">1</button>
+            <button class="btn btn-outline-secondary" onclick="apply(2)">2</button>
+            <button class="btn btn-outline-secondary" onclick="apply(3)">3</button>
+            <button class="btn btn-outline-secondary" onclick="apply(4)">4</button>
+            <button class="btn btn-outline-secondary" onclick="apply(5)">5</button>
+            <button class="btn btn-outline-secondary" onclick="apply(6)">6</button>
+            <button class="btn btn-outline-secondary" onclick="apply(7)">7</button>
+            <button class="btn btn-outline-secondary" onclick="apply(8)">8</button>
+            <button class="btn btn-outline-secondary" onclick="apply(9)">9</button>
+            <button class="btn btn-secondary" onclick="apply('')">C</button>                
+            </div>
+          </div>  
+        </div>
+      </div>
+    </div>
+    <input id="file-input" type="file" name="name" style="display: none;" onchange="loadpuzzle()" />    
     <script src="cell.js"> </script>
     <script src="code.js"> </script>
 </body>

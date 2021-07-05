@@ -1,15 +1,13 @@
 .mainarea
 {
-    padding: 20px;
-    float: left;
     display: flex;
+    float: left;
+    padding: 20px;
 }
 
 .controls
 {
-    display: flex;
     padding: 20px;
-    margin-left: 30em;
 }
 
 .cell
@@ -25,7 +23,7 @@
 }
 
 .digit {
-    font-size: large;
+    font-size: 2em;
 }
 
 .start {
