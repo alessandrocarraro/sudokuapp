@@ -1,96 +1,84 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        
-    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Free Sudoku App</a>
-        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-        </button>
+  <head>
+      <meta charset="utf-8">
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+      <link rel="stylesheet" href="style.css">
+  </head>
+  <body ondragstart="return false;" ondrop="return false;">
+    <main>
+      <nav class="navbar navbar-expand-sm navbar-dark bg-dark" aria-label="Toolbar">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Sudoku</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-main" aria-controls="navbar-main" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
     
-    <div class="navbar-nav">
-      <div class="nav-item text-nowrap">
-        <a class="nav-link px-3" href="#">Broken Link</a>
-      </div>
-    </div>
-  </header>
-  
-  <div class="container-fluid">
-    <div class="row">
-      <nav id="sidebarMenu" class="col-md-2 col-lg-1 d-md-block bg-light sidebar collapse">
-        <div class="position-sticky pt-3">
-          <ul class="nav flex-column">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#" onclick="start()">
-                <span data-feather="home"></span>
-                New
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#" onclick="loadfile()">
-                <span data-feather="file"></span>
-                Load
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#" onclick="savefile()">
-                <span data-feather="shopping-cart"></span>
-                Save
-              </a>
-            </li>
-          </ul>
+          <div class="collapse navbar-collapse" id="navbar-main">
+            <ul class="navbar-nav me-auto mb-2 mb-sm-0">
+
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="menu-file" data-bs-toggle="dropdown" aria-expanded="false">Play</a>
+                <ul class="dropdown-menu" aria-labelledby="menu-file">
+                  <li><a class="dropdown-item" href="#" onclick="start()">New</a></li>
+                  <li><a class="dropdown-item" href="#" onclick="loadfile()">Load</a></li>
+                  <li><a class="dropdown-item" href="#" onclick="savefile()">Save</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
         </div>
       </nav>
-    <main class="col-md-10 ms-sm-auto col-lg-11 px-md-4">
-
-
-    <div class="mainarea" id="content"></div>
-
-    <div class="container">
-      <div class="row px-4 py-4">
-        <div class="col-2">
-          <div class="btn-group-vertical btn-group-lg" role="group">
-              <input type="radio" class="btn-check" name="updatetype" id="mode-value" autocomplete="off" checked>
-              <label class="btn btn-outline-secondary" for="mode-value">Value</label>
-            
-              <input type="radio" class="btn-check" name="updatetype" id="mode-center" autocomplete="off">
-              <label class="btn btn-outline-secondary" for="mode-center">Center</label>
-            
-              <input type="radio" class="btn-check" name="updatetype" id="mode-corner" autocomplete="off">
-              <label class="btn btn-outline-secondary" for="mode-corner">Corner</label>
       
-              <input type="radio" class="btn-check" name="updatetype" id="mode-color" autocomplete="off">
-              <label class="btn btn-outline-secondary" for="mode-color">Color</label>
-
-              <button class="btn btn-outline-secondary" onclick="toggleSelectMode()" id="btn-select-mode" class="start">Multi</button>
-          </div>
-          
+      <div class="container">
+        <div class="row justify-content-center py-3" id="content">        
         </div>
-        <div class="col-md-auto">
-          <div class="btn-group-vertical btn-group-lg" role="group">
-            <button class="btn btn-outline-secondary" onclick="apply(1)">1</button>
-            <button class="btn btn-outline-secondary" onclick="apply(2)">2</button>
-            <button class="btn btn-outline-secondary" onclick="apply(3)">3</button>
-            <button class="btn btn-outline-secondary" onclick="apply(4)">4</button>
-            <button class="btn btn-outline-secondary" onclick="apply(5)">5</button>
-            <button class="btn btn-outline-secondary" onclick="apply(6)">6</button>
-            <button class="btn btn-outline-secondary" onclick="apply(7)">7</button>
-            <button class="btn btn-outline-secondary" onclick="apply(8)">8</button>
-            <button class="btn btn-outline-secondary" onclick="apply(9)">9</button>
-            <button class="btn btn-secondary" onclick="apply('')">C</button>                
+        <div class="row justify-content-center py-2">
+          <div class="col col-auto">
+            <div class="btn-group btn-group-lg" role="group">
+              <button class="btn btn-outline-dark" onclick="apply(1)">1</button>
+              <button class="btn btn-outline-dark" onclick="apply(2)">2</button>
+              <button class="btn btn-outline-dark" onclick="apply(3)">3</button>
+              <button class="btn btn-outline-dark" onclick="apply(4)">4</button>
+              <button class="btn btn-outline-dark" onclick="apply(5)">5</button>
+              <button class="btn btn-outline-dark" onclick="apply(6)">6</button>
+              <button class="btn btn-outline-dark" onclick="apply(7)">7</button>
+              <button class="btn btn-outline-dark" onclick="apply(8)">8</button>
+              <button class="btn btn-outline-dark" onclick="apply(9)">9</button>
+              <button class="btn btn-outline-dark text-danger" onclick="apply('')">C</button>
+              <button class="btn btn-outline-dark text-danger" onclick="apply('', 'clearall')">CE</button>
             </div>
-          </div>  
+          </div>
+          <div class="row justify-content-center py-2">
+            <div class="col col-auto"> 
+              <div class="btn-group btn-group-lg" role="group">
+                <input type="radio" class="btn-check" name="updatetype" id="mode-value" autocomplete="off" checked>
+                <label class="btn btn-outline-dark" for="mode-value">Value</label>
+              
+                <input type="radio" class="btn-check" name="updatetype" id="mode-center" autocomplete="off">
+                <label class="btn btn-outline-dark" for="mode-center">Center</label>
+              
+                <input type="radio" class="btn-check" name="updatetype" id="mode-corner" autocomplete="off">
+                <label class="btn btn-outline-dark" for="mode-corner">Corner</label>
+
+                <input type="radio" class="btn-check" name="updatetype" id="mode-color" autocomplete="off">
+                <label class="btn btn-outline-dark" for="mode-color">Color</label>
+              </div>
+            </div>
+          </div>
+          <div class="row justify-content-center py-2">
+            <div class="col col-auto"> 
+              <button class="btn btn-outline-dark btn-lg" onclick="resetPuzzle()">Reset</button>
+              <button class="btn btn-outline-dark btn-lg" onclick="return true;">Test</button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <input id="file-input" type="file" name="name" style="display: none;" onchange="loadpuzzle()" />    
-    <script src="cell.js"> </script>
-    <script src="code.js"> </script>
-</body>
+      <input id="file-input" type="file" class="invisible" onchange="loadpuzzle()" />
+      <script src="cell.js"> </script>
+      <script src="code.js"> </script>
+      <script src="generator.js"> </script>
+    </main>
+  </body>
 </html> 

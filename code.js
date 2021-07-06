@@ -1,11 +1,13 @@
 var sudoku = new Sudoku();
 var multiselect = false;
+var mousedown = false;
 
 function createCell(c, r) {
     var elem = document.createElement("div");
     elem.className = "cell";
     elem.id = "r" + r + "c" + c;
-    elem.addEventListener("click", oncellselect)
+    elem.addEventListener("mousedown", oncellmousedown);
+    elem.addEventListener("mouseenter", oncellmouseenter);
 
     if (r % 3 == 0)
         elem.style.borderTop = "3px solid black";
@@ -22,15 +24,16 @@ function createCell(c, r) {
     return elem;
 }
 
-function oncellselect(e) {
-    if (this.classList.contains("selectedcell"))
-        this.classList.remove("selectedcell");
-    else
-    {
-        if (!multiselect)
-            resetSelectedCells();
-        this.classList.add("selectedcell")    
-    }
+function oncellmousedown(e) {
+    if (!e.ctrlKey)
+        resetSelectedCells();
+    mousedown = true;
+    this.classList.add("selectedcell");
+}
+
+function oncellmouseenter(e) {    
+    if (mousedown)
+        this.classList.add("selectedcell")
 }
 
 function resetSelectedCells() {
@@ -40,9 +43,11 @@ function resetSelectedCells() {
 
 function createRow(r) {
     var row = document.createElement("div");
+    row.classList.add("row")
+    row.classList.add("justify-content-center")
     for (var i = 0; i < 9; i++)
     {
-        var cell = createCell(r, i);
+        var cell = createCell(i, r);
         row.appendChild(cell);
     }
     return row;
@@ -50,17 +55,7 @@ function createRow(r) {
 
 function start(data) {
     sudoku = new Sudoku(data);
-    var mainarea = document.getElementById("content");
-    mainarea.textContent = "";
-    for (var i = 0; i < 9; i++)
-    {
-        var row = createRow(i);
-        mainarea.appendChild(row);
-    } 
     sudoku.renderAll();
-    for(const element of document.getElementsByClassName("updatetype")) {
-        element.addEventListener("click", toggleUpdateMode)
-    }
 }
 
 function toggleUpdateMode(e) {
@@ -100,19 +95,16 @@ function getUpdateMode() {
     return "mode-value";
 }
 
-function apply(value) {
-    var updatemode = getUpdateMode();
+function apply(value, updatemode) {
+    var updatemode = updatemode ?? getUpdateMode();
     var selection = document.querySelectorAll(".selectedcell");
     sudoku.updateCells(selection, updatemode, value);
     if (multiselect)
         toggleSelectMode();
 }
 
-function loadfile() {
-    document.getElementById('file-input').click();
-}
-
 function loadpuzzle(){
+    console.log("file input changed");
     var loader = document.getElementById('file-input');
     var reader = new FileReader();
     reader.readAsText(loader.files[0]);
@@ -123,6 +115,16 @@ function loadpuzzle(){
     reader.onerror = function() {
         console.log(reader.error);
     }    
+}
+
+function resetPuzzle() {
+    start(sudoku.inputData);
+}
+
+function loadfile() {
+    var elem = document.getElementById("file-input");
+    elem.value = null;
+    elem.click();
 }
 
 function savefile() {
@@ -137,5 +139,7 @@ function download(content, fileName, contentType) {
     a.download = fileName;
     a.click();
 }
+
+window.onmouseup = e => { mousedown = false; }
 
 start();
