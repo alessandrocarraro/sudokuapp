@@ -52,13 +52,13 @@ function createCage(walls) {
     var elem = document.createElement("div");
     elem.classList.add("cage");
     if (walls.top)
-        elem.style.borderTop = "1px dashed black";
+        elem.style.borderTop = "2px dashed black";
     if (walls.bottom)
-        elem.style.borderBottom = "1px dashed black";
+        elem.style.borderBottom = "2px dashed black";
     if (walls.left)
-        elem.style.borderLeft = "1px dashed black";
+        elem.style.borderLeft = "2px dashed black";
     if (walls.right)
-        elem.style.borderRight = "1px dashed black";
+        elem.style.borderRight = "2px dashed black";
     return elem;
 }
 
