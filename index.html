@@ -70,15 +70,43 @@
           <div class="row justify-content-center py-2">
             <div class="col col-auto"> 
               <button class="btn btn-outline-dark btn-lg" onclick="resetPuzzle()">Reset</button>
-              <button class="btn btn-outline-dark btn-lg" onclick="return true;">Test</button>
+              <button class="btn btn-outline-dark btn-lg" onclick="solvePuzzle()">Solve</button>
+              <button class="btn btn-outline-dark btn-lg" onclick="testPuzzle()">Test</button>
             </div>
           </div>
         </div>
       </div>
       <input id="file-input" type="file" class="invisible" onchange="loadpuzzle()" />
-      <script src="cell.js"> </script>
+
+      
+      <script src="js/puzzle.js"> </script>
+      <script src="js/renderer.js"> </script>
       <script src="code.js"> </script>
       <script src="generator.js"> </script>
     </main>
+    <div class="modal" tabindex="-1" role="dialog" id="modal-success">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Looks Good</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" data-bs-target="modal-failure" onclick="closeModal('modal-success')">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal" tabindex="-1" role="dialog" id="modal-failure">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Something doesn't look right...</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" data-bs-target="modal-failure" onclick="closeModal('modal-failure')">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html> 

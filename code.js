@@ -1,4 +1,4 @@
-var sudoku = new Sudoku();
+var sudoku = new Renderer();
 var multiselect = false;
 var mousedown = false;
 
@@ -41,20 +41,8 @@ function resetSelectedCells() {
         cell.classList.remove("selectedcell")});
 }
 
-function createRow(r) {
-    var row = document.createElement("div");
-    row.classList.add("row")
-    row.classList.add("justify-content-center")
-    for (var i = 0; i < 9; i++)
-    {
-        var cell = createCell(i, r);
-        row.appendChild(cell);
-    }
-    return row;
-}
-
 function start(data) {
-    sudoku = new Sudoku(data);
+    sudoku = new Renderer(data);
     sudoku.renderAll();
 }
 
@@ -119,6 +107,34 @@ function loadpuzzle(){
 
 function resetPuzzle() {
     start(sudoku.inputData);
+}
+
+function solvePuzzle() {
+    var values = sudoku.getCurrentValues();
+    var solver = new Puzzle(values);
+    var solution = solver.solve();
+    solution.values.map((v, idx) => {
+        var c = idx % 9;
+        var r = (idx-c)/9;
+        var label = "r" + r + "c" + c;
+        sudoku.cells[label].value = v;
+        sudoku.renderAll();
+    });
+}
+
+function testPuzzle() {
+    var values = sudoku.getCurrentValues();
+    var solver = new Puzzle(values);
+    var id = solver.valid() ? "modal-success" : "modal-failure";
+    var elem = document.getElementById(id);
+    var msgbox = bootstrap.Modal.getOrCreateInstance(elem);
+    msgbox.show();
+}
+
+function closeModal(id) {
+    var elem = document.getElementById(id);
+    var modal = bootstrap.Modal.getInstance(elem);
+    modal.hide();
 }
 
 function loadfile() {
