@@ -14,11 +14,21 @@ function shuffle(value) {
     return a;
 }
 
+Set.prototype.first = function(){return this.values().next().value;};
+
+Set.prototype.equals = function(other) {
+    if (this.size !== other.size) return false;
+    for (var a of this) if (!other.has(a)) return false;
+    return true;
+}
+
+Array.prototype.sum = function() { return this.reduce((a,b) => a + b, 0); };
+
 class Puzzle {
     constructor(values, defn, state)
     {
         this.values = values.map(this.clean);
-        this.defn = defn ?? this.standard();
+        this.defn = defn ?? Puzzle.create();
         if (state != null)
             this.state = state;
         else
@@ -27,14 +37,31 @@ class Puzzle {
 
     clean(v) {
         v = v + '';
-        return numbers.includes(v) ? v : '.';
+        return numbers.includes(v) ? parseInt(v) : 0;
     }
 
     clone() {
         return new Puzzle(this.values.map(identity), this.defn, this.state.map(identity));
     }
 
-    standard() {
+    static create(constraints) {
+        constraints = constraints ?? this.standardsets();
+        var cells = this.constraints(constraints);
+        return {"constraints": constraints, "cells": cells};
+    }
+
+    static constraints(values) {
+        var cells = new Array();
+        for(var i = 0; i < 81; i++)
+            cells.push(values.map((s,idx) => s.includes(i) ? idx : null).filter(w => w != null));
+        return cells;        
+    }
+
+    static indexFromLabel(label) {
+        return parseInt(label[1]) * 9 + parseInt(label[3]);
+    }
+
+    static standardsets() {
         // compute sets
         var sets = new Array();
         var elems = [0, 1, 2, 3, 4, 5, 6, 7, 8]
@@ -48,33 +75,66 @@ class Puzzle {
                 return o + (e-e%3)*3 + e%3;
             }));
         }
-
-        // compute cells
-        var cells = new Array();
-        for(var i = 0; i < 81; i++)
-            cells.push(sets.map((s,idx) => s.includes(i) ? idx : null).filter(w => w != null));
-        return {"sets": sets, "cells": cells};
+        return sets.map((c) => new Unique(c));
     }
 
-    update(idx, value) {
-        this.values[idx] = value;
-        this.state[idx] = value;
-        for(const setidx of this.defn.cells[idx]) {
-            for(const peeridx of this.defn.sets[setidx]) {
-                if (peeridx != idx)
-                {
-                    var current = this.state[peeridx];
-                    if (current.includes(value))
-                    {
-                        var updated = current.replace(value, "");
-                        this.state[peeridx] = updated;
-                        if (updated.length == 1)
-                        {
-                            if(!this.update(peeridx, updated))
-                                return false;
-                        }
-                        else if (updated.length == 0)
-                            return false;
+    static fromjson(defn) {
+        var values = new Array(81).map((x) => 0);
+        for(var label in defn.values) {
+            values[this.indexFromLabel(label)] = defn.values[label];
+        }
+
+        var constraints = this.standardsets();
+        if (defn.elements)
+        {
+            for(var elem of defn.elements) {
+                if (elem.type == "cage") {
+                    var cells = elem.cells.map(this.indexFromLabel);
+                    constraints.push(new Cage(cells, elem.value));
+                }
+            }
+        }
+        return this.create(constraints)
+    }
+
+    remove(idx, values) {
+        var current = this.state[idx];
+        var updated = new Set(current);
+        for(var v of values) {
+            updated.delete(v);
+        }
+        if (updated.size != current.size) {
+            if (!this.updateState(idx, updated))
+                return false;
+        }
+        return true;
+    }
+
+    updateState(idx, state) {
+        this.state[idx] = state;
+        if (state.size == 0)
+            return false;        
+        if (state.size == 1) {
+            if(!this.update(idx, state.first()))
+                return false;
+        }
+        else if (state.size == 2) {
+            for(const setidx of this.defn.cells[idx]) {                
+                var set = this.defn.constraints[setidx];
+                for(var peeridx of set.cells) {
+                    if (idx != peeridx) {
+                        var peerstate = this.state[peeridx];
+                        if (state.equals(peerstate)) {
+                            // I found a naked pair
+                            // remove the pair from all other cells in the set
+                            for(var cellidx of set.cells) {
+                                if (cellidx != idx && cellidx != peeridx) {
+                                    if (!this.remove(cellidx, state)) {
+                                        return false;
+                                    }
+                                }
+                            }
+                        }    
                     }
                 }
             }
@@ -82,80 +142,93 @@ class Puzzle {
         return true;
     }
 
-    compute() {
-        this.state = this.values.map((v) => "123456789");
+    find(idx) {
+        return this.defn.cells[idx].forEach(i => this.defn.constraints[i]);
+    }
+
+    update(idx, value) {
+        this.values[idx] = value;
+        this.state[idx] = new Set([value]);
+        for(const setidx of this.defn.cells[idx]) {
+            var c = this.defn.constraints[setidx];
+            if (!c.update(this, idx, value)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    compute() {        
+        this.state = this.values.map((v) => new Set([1, 2, 3, 4, 5, 6, 7, 8, 9]));
+        for(const constraint of this.defn.constraints) {
+            constraint.initilize(this);
+        }
+
         for(const [idx, value] of this.values.entries())
         {
-            if (value != ".")
+            if (value)
                 this.update(idx, value);
         }
     }
 
     // check if all values are defined
     completed () {
-        return this.values.every((v) => v != '.');
+        return this.values.every((v) => v);
     }
 
     valid() {
-        if (!this.completed())
-            return false;
-        
-        // check all sets
-        return this.defn.sets.every(s => this.unique(s));
-    }
-
-    unique(set) {
-        var values = new Set(set.map((i) => this.values[i]));
-        return values.size == set.length;
+        return this.defn.constraints.every(c => c.valid(this));
     }
 
     possible() {
-        return this.state.every((x) => x.length > 0);
+        if (!this.state.every((x) => x.size > 0)) {
+            return false;
+        }
+        return this.defn.constraints.every(set => set.possible(this));
     }
 
     solve(depth=1) {
         if (depth > 81)
             console.log("something is wrong");
-       
-        var unknown = this.state.filter(x => x.length > 1).length;
-        if (unknown == 0)
-        {
-            
-            this.values = this.state;
-            if (this.defn.sets.every(s => this.unique(s)))
-            {
-                console.log("found a valid solution");
-                console.log(this.print());
+        
+        if (this.completed()) {
+            if(this.valid())
                 return this;
-            }
             return;
         }
+        
+        var minChoices = 10, guessIdx = -1;
+        this.state.map((state, idx) => {
+            var priority = state.size;
+            if (priority > 1) {
+                priority = priority / this.defn.cells[idx].length;
 
-//        console.log("unknown cells: " + unknown + " [depth=" + depth + "]");
-        var sizes = this.state.map(x => x.length > 1 ? x.length : 10);
-        var minSize = Math.min.apply(null, sizes);
-        var guessIdx = sizes.indexOf(minSize);
+                if (priority < minChoices) {
+                    minChoices = priority;
+                    guessIdx = idx;
+                }
+            }
+        })
         var guessState = this.state[guessIdx];
-        var guess = guessState.split(''); //shuffle(guessState);
-
-//        console.log("best cell to guess is " + guessIdx);
-//        console.log("guess state is " + guessState + ' in order ' + guess);
-        for(const g of guess)
+        console.log("guessing [" + guessIdx + "] from { " + [...guessState].join(', ') + " }");
+        for(const g of guessState)
         {
             var clone = this.clone();
-            clone.update(guessIdx, g);
-            if (clone.possible())
-            {
-                var solution = clone.solve(depth+1);
-                if (solution)
-                    return solution;
+            if (clone.update(guessIdx, g)) {
+                console.log(clone.print())
+                if (clone.possible()) {
+                    var solution = clone.solve(depth+1);
+                    if (solution) {
+                        return solution;
+                    }
+                }
             }
         }
         return;
     }
 
     print() {
-        return [...Array(9).keys()].map(i => this.values.slice(i*9, i*9+9).join('')).join('\n');
+        return "=========\n" + [...Array(9).keys()].map(i => this.values.slice(i*9, i*9+9).join('')).join('\n');
     }
 }
 

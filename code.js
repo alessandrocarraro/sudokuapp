@@ -109,32 +109,44 @@ function resetPuzzle() {
     start(sudoku.inputData);
 }
 
+function showMessage(message, title="Message") {
+    var elem = document.getElementById("modal-message");
+    var msgbox = bootstrap.Modal.getOrCreateInstance(elem);
+
+    var textElem = document.getElementById("message-text");
+    textElem.innerText = message;
+
+    var titleElem = document.getElementById("message-title");
+    titleElem.innerText = title;
+
+    msgbox.show();
+}
+
 function solvePuzzle() {
     var values = sudoku.getCurrentValues();
-    var solver = new Puzzle(values);
+    var defn = Puzzle.fromjson(sudoku.inputData);
+    var solver = new Puzzle(values, defn);
     var solution = solver.solve();
-    solution.values.map((v, idx) => {
-        var c = idx % 9;
-        var r = (idx-c)/9;
-        var label = "r" + r + "c" + c;
-        sudoku.cells[label].value = v;
-        sudoku.renderAll();
-    });
+    if (solution == null){        
+        showMessage("I cannot find a solution.", "Warning")
+    }
+    else {
+        solution.values.map((v, idx) => {
+            var c = idx % 9;
+            var r = (idx-c)/9;
+            var label = "r" + r + "c" + c;
+            sudoku.cells[label].value = v;
+            sudoku.renderAll();
+        });    
+    }
 }
 
 function testPuzzle() {
     var values = sudoku.getCurrentValues();
-    var solver = new Puzzle(values);
-    var id = solver.valid() ? "modal-success" : "modal-failure";
-    var elem = document.getElementById(id);
-    var msgbox = bootstrap.Modal.getOrCreateInstance(elem);
-    msgbox.show();
-}
-
-function closeModal(id) {
-    var elem = document.getElementById(id);
-    var modal = bootstrap.Modal.getInstance(elem);
-    modal.hide();
+    var defn = Puzzle.fromjson(sudoku.inputData);
+    var solver = new Puzzle(values, defn);
+    var message = solver.valid() ? "Looks good to me!!!": "Something doesn't look right...";
+    showMessage(message);
 }
 
 function loadfile() {
@@ -158,4 +170,15 @@ function download(content, fileName, contentType) {
 
 window.onmouseup = e => { mousedown = false; }
 
-start();
+
+var puzzle = { "values" : {"r0c0": 7, "r6c3": 3, "r5c2": 2, "r8c8": 5},
+  "elements": [{"type": "cage", "value": 23, "cells": ["r1c2", "r1c3", "r2c3"]},
+                {"type": "cage", "value": 12, "cells": ["r0c0", "r0c1"]},
+                {"type": "cage", "value": 27, "cells": ["r2c0", "r3c0", "r4c0", "r5c0", "r6c0", "r7c0"]},
+                {"type": "cage", "value": 17, "cells": ["r6c6", "r6c7"]},
+                {"type": "cage", "value": 12, "cells": ["r1c6", "r1c7", "r1c8"]},
+                {"type": "cage", "value": 21, "cells": ["r5c5", "r5c6", "r5c7", "r5c8"]},
+                {"type": "cage", "value": 18, "cells": ["r2c7", "r2c8", "r3c7", "r3c8"]},
+            ]}
+
+start(puzzle);
